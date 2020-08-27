@@ -35,11 +35,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.onShuffle = this.onShuffle.bind(this);
-    this.onUpdateDeck = this.onUpdateDeck.bind(this);
     this.state = {
       chosenRow: "top",
       numbShuffles: 0,
-      finalArrangement: [],
       arrCurrentDeck: getDeck(),
     };
   }
@@ -54,50 +52,41 @@ class App extends Component {
     });
   };
 
-  onUpdateDeck = (argFinalArrangement) => {
-    console.log("Current Arrangement ", argFinalArrangement);
-    this.setState(() => {
-      return {
-        finalArrangement: argFinalArrangement,
-      };
-    });
-  };
-
   render() {
     let arrFinal = [];
-    let topDeck = [];
+    let leftDeck = [];
     let middleDeck = [];
-    let bottomDeck = [];
+    let rightDeck = [];
     if (this.state.numbShuffles === 0) {
-      topDeck = this.state.arrCurrentDeck.slice(0, 7);
+      leftDeck = this.state.arrCurrentDeck.slice(0, 7);
       middleDeck = this.state.arrCurrentDeck.slice(7, 14);
-      bottomDeck = this.state.arrCurrentDeck.slice(14, 21);
-      arrFinal.push(topDeck, middleDeck, bottomDeck);
+      rightDeck = this.state.arrCurrentDeck.slice(14, 21);
+      arrFinal = leftDeck.concat(middleDeck, rightDeck);
       console.log("First Arrange: ", arrFinal);
-    } else if (this.state.numbShuffles > 0 && this.state.chosenRow === "top") {
-      topDeck = this.state.arrCurrentDeck.slice(7, 14);
+    } else if (this.state.numbShuffles > 0 && this.state.chosenRow === "left") {
+      leftDeck = this.state.arrCurrentDeck.slice(7, 14);
       middleDeck = this.state.arrCurrentDeck.slice(0, 7);
-      bottomDeck = this.state.arrCurrentDeck.slice(14, 21);
-      arrFinal.push(topDeck, middleDeck, bottomDeck);
-      console.log("TOP: ", arrFinal);
+      rightDeck = this.state.arrCurrentDeck.slice(14, 21);
+      arrFinal = leftDeck.concat(middleDeck, rightDeck);
+      console.log("LEFT: ", arrFinal);
     } else if (
       this.state.numbShuffles > 0 &&
       this.state.chosenRow === "middle"
     ) {
-      topDeck = this.state.arrCurrentDeck.slice(14, 21);
+      leftDeck = this.state.arrCurrentDeck.slice(14, 21);
       middleDeck = this.state.arrCurrentDeck.slice(7, 14);
-      bottomDeck = this.state.arrCurrentDeck.slice(0, 7);
-      arrFinal.push(topDeck, middleDeck, bottomDeck);
+      rightDeck = this.state.arrCurrentDeck.slice(0, 7);
+      arrFinal = leftDeck.concat(middleDeck, rightDeck);
       console.log("MIDDLE: ", arrFinal);
     } else if (
       this.state.numbShuffles > 0 &&
-      this.state.chosenRow === "bottom"
+      this.state.chosenRow === "right"
     ) {
-      topDeck = this.state.arrCurrentDeck.slice(0, 7);
+      leftDeck = this.state.arrCurrentDeck.slice(0, 7);
       middleDeck = this.state.arrCurrentDeck.slice(14, 21);
-      bottomDeck = this.state.arrCurrentDeck.slice(7, 14);
-      arrFinal.push(topDeck, middleDeck, bottomDeck);
-      console.log("BOTTOM: ", arrFinal);
+      rightDeck = this.state.arrCurrentDeck.slice(7, 14);
+      arrFinal = leftDeck.concat(middleDeck, rightDeck);
+      console.log("RIGHT: ", arrFinal);
     } else {
       console.log("FROM ELSE: ", arrFinal);
     }
@@ -113,37 +102,47 @@ class App extends Component {
           <h4 className="text-warning">
             Please choose a card and remember it! We will try to guess it!
           </h4>
-          <strong>{this.state.numbShuffles}</strong>
         </div>
 
-        {this.state.numbShuffles < 1 ? (
+        {this.state.numbShuffles < 3 ? (
           <>
-            <CardRows
-              deck={topDeck}
-              onRowSelected={this.onShuffle}
-              selectedDeck={"top"}
-            />
-            <CardRows
-              deck={middleDeck}
-              onRowSelected={this.onShuffle}
-              selectedDeck={"middle"}
-            />
-            <CardRows
-              deck={bottomDeck}
-              onRowSelected={this.onShuffle}
-              selectedDeck={"bottom"}
-            />
+            <div className="row justify-content-center">
+              <div className="col-4">
+                <CardRows
+                  wholeDeck={this.state.arrCurrentDeck}
+                  deck={leftDeck}
+                  onRowSelected={this.onShuffle}
+                  selectedDeck={"left"}
+                />
+              </div>
+              <div className="col-4">
+                <CardRows
+                  wholeDeck={this.state.arrCurrentDeck}
+                  deck={middleDeck}
+                  onRowSelected={this.onShuffle}
+                  selectedDeck={"middle"}
+                />
+              </div>
+              <div className="col-4">
+                <CardRows
+                  wholeDeck={this.state.arrCurrentDeck}
+                  deck={rightDeck}
+                  onRowSelected={this.onShuffle}
+                  selectedDeck={"right"}
+                />
+              </div>
+            </div>
           </>
         ) : (
           <>
             <div className="row justify-content-center">
               <div className="col-auto fade-in">
                 <div className="card border-0">
-                  {this.state.finalArrangement && (
+                  {arrFinal && (
                     <img
-                      src={this.state.finalArrangement[10]}
+                      src={arrFinal[10]}
                       className="card-img-top w-50"
-                      alt={this.state.finalArrangement[10]}
+                      alt={arrFinal[10]}
                     />
                   )}
                 </div>
